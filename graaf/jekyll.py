@@ -1,4 +1,7 @@
+from __future__ import unicode_literals
+
 import os
+import codecs
 
 import yaml
 import markdown
@@ -33,25 +36,31 @@ class JekyllGenerator(Generator):
 
         config = []
 
-        with open(os.path.join(root, filename)) as fin:
+        with codecs.open(os.path.join(root, filename), 'r', 'utf-8') as fin:
             lines = iter(fin)
 
             line = next(lines)
-            if line.rsplit() == '---':
+
+            # If the markdown file starts with '---\n', then we extract the config data from
+            # this YAML header, until we hit the next '---\n' Note that this is slightly less
+            # strict, as it would support '---   \t\n', for instance.
+            if line.rsplit() == ['---']:
                 line = next(lines)
 
-            try:
-                while line.rsplit() != '---':
-                    config.append(line)
-                    line = next(lines)
-            except StopIteration:
-                return False
+                try:
+                    while line.rsplit() != ['---']:
+                        config.append(line)
+                        line = next(lines)
+                except StopIteration:
+                    return False
 
             config = yaml.load(''.join(config))
             content = ''.join(lines)
 
-        config['content'] = markdown.reset().convert(content)
-        with open(os.path.join(dest_dir, basename + '.html'), 'w') as fout:
-            fout.write(processor.render('jekyll/%s.html' % config['layout'], config))
+        config['content'] = md.reset().convert(content)
+
+        with codecs.open(os.path.join(dest_dir, basename + '.html'), 'w', 'utf-8') as fout:
+            tmpl = processor.templates['%(layout)s.html' % config]
+            fout.write(tmpl.render(config))
 
         return True
