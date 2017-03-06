@@ -52,6 +52,6 @@ class JekyllGenerator(Generator):
 
         config['content'] = markdown.reset().convert(content)
         with open(os.path.join(dest_dir, basename + '.html'), 'w') as fout:
-            fout.write(processor.render('jekyl/%s.html' % config['layout'], config))
+            fout.write(processor.render('jekyll/%s.html' % config['layout'], config))
 
         return True
