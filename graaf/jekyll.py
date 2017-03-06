@@ -9,12 +9,22 @@ from .base import Generator
 md = markdown.Markdown()
 
 
-class JekylGenerator(Generator):
+class JekyllGenerator(Generator):
     '''
-    Generator to support Jekyl files.
+    Generator to support Jekyll files.
 
 
-    These files begin with a YAML document, followed by Markown content.
+    These files begin with a YAML document, followed by Markown content:
+
+    ---
+    title: Document title
+    date: YYYY-mm-dd HH:MM:SS
+    tags: [tag1, tag2]
+    layout: template-name
+    ---
+
+    Markdown content goes here.
+
     '''
     extensions = ['.md', '.markdown']
 
